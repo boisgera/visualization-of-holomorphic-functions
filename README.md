@@ -16,5 +16,4 @@ uvx --with git+https://github.com/boisgera/visualization-of-holomorphic-function
 https://github.com/rougier/scientific-visualization-book
 
 
-
 [uv]: https://docs.astral.sh/uv/
