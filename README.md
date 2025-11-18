@@ -1,12 +1,13 @@
 # Visualization of holomorphic functions
 
+
+![Domain coloring](/media/domain-coloring.png)
+
 A graphical representation of the function
 
 $$
 z \in \mathbb{C} \mapsto \frac{(z + 1)^2}{z - 1} \in \mathbb{C} \cup {\infty}.
 $$
-
-![Domain coloring](/media/domain-coloring.png)
 
 
 ## Goals
