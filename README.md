@@ -49,6 +49,8 @@ to edit the final notebook.
 
 ## References
 
+- 📖 [Complex Analysis and Applications](https://doi.org/10.23646/oer.000001) by Sébastien Boisgérault.
+
 - 📖 [Scientific Visualization - Python & Matplotlib](https://github.com/rougier/scientific-visualization-book) by Nicolas Rougier.
     
   This project was inspired by the georgous [domain coloring image in the book 
