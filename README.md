@@ -8,7 +8,7 @@ If you want to work in your browser, without any install steps
 
   - Create a new marimo notebook: <https://marimo.app/> or
 
-  - Open the final project notebook [here](https://boisgera.github.io/visualization-of-holomorphic-functions/)
+  - Open the final project notebook [here](https://boisgera.github.io/visualization-of-holomorphic-functions/).
 
 
 ## Installation
