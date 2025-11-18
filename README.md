@@ -23,10 +23,11 @@ In this project you will learn how to
 
 If you want to work in your browser, without any install steps, either
 
-  - create a new marimo notebook: <https://marimo.app/> or
+  - create a new [marimo] notebook: <https://marimo.app/> or
 
   - open the final project notebook [here](https://boisgera.github.io/visualization-of-holomorphic-functions/).
 
+[marimo]: https://marimo.io/
 
 ## Installation
 
