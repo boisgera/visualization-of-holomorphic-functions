@@ -1,5 +1,8 @@
 # Visualization of holomorphic functions
 
+![Domain coloring](/media/domain-coloring.png)
+
+
 ## Getting started
 
 If you want to work in your browser, without any install steps, either
@@ -34,7 +37,7 @@ to edit the final notebook.
   This project was inspired by the georgous [domain coloring image in the book 
 showcase section](https://inria.hal.science/hal-03427242/document?page=178).
 
-![Domain coloring](/media/domain-coloring.png)
+![Domain coloring by Nicolas Rougier](/media/rougier.png)
 
 
 [uv]: https://docs.astral.sh/uv/

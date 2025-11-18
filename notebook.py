@@ -298,7 +298,7 @@ def _(np, plt):
 
 
 @app.cell
-def _(figure, gcf, np, plt):
+def _(np, plt):
     _T = np.linspace(-2.5, 2.5, 1024)
     _X, _Y = np.meshgrid(_T, _T)
     _Z = _X + 1j * _Y
@@ -307,7 +307,7 @@ def _(figure, gcf, np, plt):
     _N = 2
     _An = _A / 2 / np.pi * _N
     _L = np.log2(abs(_W))
-    figure(figsize=(8, 8))
+    plt.figure(figsize=(8, 8))
     _ax = plt.gca()
     _ax.set_facecolor("white")
     _im = _ax.imshow(
@@ -321,7 +321,7 @@ def _(figure, gcf, np, plt):
     _ax.contour(_L - np.round(_L), [0.0], colors="black", linewidths=0.5)
     _ax.set_xticks([])
     _ax.set_yticks([])
-    gcf()  # "twilight", #"twilight", #"Spectral",
+    plt.gcf()  # "twilight", #"twilight", #"Spectral",
     return
 
 
@@ -384,31 +384,64 @@ def _(np, plt):
 
 @app.cell
 def _(np, plt):
-    # TODO:
-    _T = np.linspace(-2.5, 2.5, 1024)
-    _X, _Y = np.meshgrid(_T, _T)
-    _Z = _X + 1j * _Y
-    _W = (_Z + 1) ** 2 / (_Z - 1)
-    _A = np.angle(_W)
-    _N = 2
-    _An = _A / 2 / np.pi * _N
-    _L = np.log2(abs(_W))
-    plt.figure(figsize=(8, 8))
-    _ax = plt.gca()
-    _ax.set_facecolor("white")
-    _im = _ax.imshow(
-        _A,
-        interpolation="nearest",
-        cmap="twilight_shifted",
-        rasterized=True,
-        alpha=1.0,
-    )
-    _ax.contour(_An - np.round(_An), [0.0], colors="black", linewidths=0.5)
-    _ax.contour(_L - np.round(_L), [0.0], colors="black", linewidths=0.5)
-    _ax.set_xticks([])
-    _ax.set_yticks([])
-    plt.savefig("image.png")
-    plt.gcf()  # "twilight", #"twilight", #"Spectral",
+    def _(
+        f=lambda z: (z + 1)**2 / (z-1),
+        domain=[-2, 2, -1.5, 1.5],
+        width=8.0,
+        n=2048,
+        title=None
+    ):
+        xmin, xmax, ymin, ymax = domain
+        X, Y = np.meshgrid(
+            np.linspace(xmin, xmax, 2048),
+            np.linspace(ymin, ymax, 2048),
+        )
+        wh_ratio = (xmax - xmin) / (ymax - ymin)
+        Z = X + 1j * Y
+        W = f(Z)
+        L = np.log2(np.abs(W))
+        A = np.angle(W) / (2 * np.pi) 
+
+        plt.figure(figsize=(width, width / wh_ratio))
+        ax = plt.gca()
+        ax.set_facecolor("white")
+        im = ax.imshow(
+            A,
+            extent=domain,
+            interpolation="nearest",
+            cmap="twilight_shifted",
+            rasterized=True,
+            alpha=0.9,
+        )
+        plt.contour(
+            X,
+            Y,
+            L - np.round(L),
+            levels=[0.0],
+            colors="black",
+            linewidths=0.5,
+        )
+        plt.contour(
+            X,
+            Y,
+            A * 4 - np.round(A * 4),
+            levels=[0.0],
+            colors="black",
+            linestyles="dotted",
+            linewidths=0.5,
+        )
+        if title:
+            plt.title(title)
+        ax.set_xticks([])
+        ax.set_yticks([])
+
+        #plt.savefig("domain-coloring.png")
+        return plt.gcf()
+
+
+    _()
+
+
     return
 
 
