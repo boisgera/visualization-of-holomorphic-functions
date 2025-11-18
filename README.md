@@ -1,7 +1,5 @@
 # Visualization of holomorphic functions
 
-![Domain coloring](/media/domain-coloring.png)
-
 ## Getting started
 
 If you want to work in your browser, without any install steps
@@ -31,8 +29,12 @@ to edit the final notebook.
 
 ## References
 
-- Scientific Visualization - Python & Matplotlib, by Nicolas Rougier,
-https://github.com/rougier/scientific-visualization-book
+- 📖 [Scientific Visualization - Python & Matplotlib](https://github.com/rougier/scientific-visualization-book) by Nicolas Rougier.
+    
+  This project was inspired by the georgous [domain coloring image in the book 
+showcase section](https://inria.hal.science/hal-03427242/document?page=178).
+
+![Domain coloring](/media/domain-coloring.png)
 
 
 [uv]: https://docs.astral.sh/uv/
