@@ -1,6 +1,20 @@
 # Visualization of holomorphic functions
 
+A graphical representation of the function
+$$
+z\mapsto \frac{(z + 1)^2}{z - 1}
+$$
+
 ![Domain coloring](/media/domain-coloring.png)
+
+
+## Goals
+
+In this project you will learn how to 
+
+  - use contour lines and domain coloring to represent holomorphic functions,
+
+  - analyze this kind of representation to get some information about the function.
 
 
 ## Getting started
