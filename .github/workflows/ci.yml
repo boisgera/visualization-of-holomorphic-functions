@@ -3,11 +3,11 @@ name: Build and Deploy to GitHub Pages
 on:
   push:
     branches:
-      - main  # Change this to your default branch if different
-  workflow_dispatch:  # Allows manual triggering
+      - master
+  workflow_dispatch:
 
 permissions:
-  contents: write  # Required to push to gh-pages branch
+  contents: write
 
 jobs:
   build-and-deploy:
