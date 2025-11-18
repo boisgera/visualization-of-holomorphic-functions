@@ -2,17 +2,17 @@
 
 ## Getting started
 
-If you want to work in your browser, without any install steps
+If you want to work in your browser, without any install steps, either
 
-  - Create a new marimo notebook: <https://marimo.app/> or
+  - create a new marimo notebook: <https://marimo.app/> or
 
-  - Open the final project notebook [here](https://boisgera.github.io/visualization-of-holomorphic-functions/).
+  - open the final project notebook [here](https://boisgera.github.io/visualization-of-holomorphic-functions/).
 
 
 ## Installation
 
-For more control, install [uv], clone the repository 
-of this project and inside its directory, execute either:
+For more control, install [uv], clone this GitHub repository 
+and inside the project directory, execute either:
 
 ```bash
 uv marimo edit my-new-notebook.py
