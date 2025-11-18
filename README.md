@@ -1,3 +1,5 @@
+[![Build](https://github.com/boisgera/visualization-of-holomorphic-functions/actions/workflows/ci.yml/badge.svg)](https://github.com/boisgera/visualization-of-holomorphic-functions/actions/workflows/ci.yml)
+
 # Visualization of holomorphic functions
 
 
