@@ -1,6 +1,6 @@
 import marimo
 
-__generated_with = "0.17.6"
+__generated_with = "0.17.8"
 app = marimo.App()
 
 
@@ -26,19 +26,6 @@ def _():
     return colormaps, np, plt
 
 
-@app.cell
-def _(mo):
-    mo.md(r"""
-    ## A few holomorphic functions
-    """)
-    return
-
-
-@app.function
-def Joukowsky(z):
-    return 0.5 * (z + 1.0 / z)
-
-
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
@@ -61,7 +48,7 @@ def _(mo, np, plt):
         y = np.linspace(-1, 1, 1000)
         [X, Y] = np.meshgrid(x, y)
         Z = f(X, Y)
-    
+
         fig = plt.figure()
         plt.contour(X, Y, Z)
         plt.grid(True)
@@ -85,7 +72,7 @@ def _(mo, np, plt):
         y = np.linspace(-1, 1, 1000)
         [X, Y] = np.meshgrid(x, y)
         Z = f(X, Y)
-    
+
         fig = plt.figure()
         plt.contour(X, Y, Z)
         plt.colorbar()
@@ -110,7 +97,7 @@ def _(mo, np, plt):
         y = np.linspace(-1, 1, 1000)
         [X, Y] = np.meshgrid(x, y)
         Z = f(X, Y)
-    
+
         fig = plt.figure()
         labels = plt.contour(X, Y, Z, colors="black")
         plt.gca().clabel(labels)
@@ -240,7 +227,7 @@ def _(mo, np, plt):
         y = np.linspace(-1, 1, 1000)
         [X, Y] = np.meshgrid(x, y)
         Z = f(X, Y)
-    
+
         fig = plt.figure()
         plt.imshow(Z, extent=[-2, 2, -1, 1])
         plt.colorbar()
@@ -281,7 +268,7 @@ def _(colormaps, mo, np, plt):
         y = np.linspace(-1, 1, 1000)
         [X, Y] = np.meshgrid(x, y)
         Z = f(X, Y)
-    
+
         fig = plt.figure()
         plt.imshow(Z, extent=[-2, 2, -1, 1], cmap=colormaps["jet"])
         plt.colorbar()
@@ -307,7 +294,7 @@ def _(mo):
     return
 
 
-@app.cell
+@app.cell(hide_code=True)
 def _(np, plt):
     def _(
         f = lambda z: z,
@@ -349,18 +336,20 @@ def _(np, plt):
         return plt.gcf()
 
     #_()
-    _(Joukowsky)
+    #_(lambda z: (z - 1) ** 2 / (z + 1))
+    _(lambda z: 0.5 * (z + 1 / z))
+    #_(lambda z: np.sin(1 / z))
     return
 
 
-@app.cell
+@app.cell(hide_code=True)
 def _(np, plt):
     def _(
         f=lambda z: z,
         domain=[-2, 2, -1.5, 1.5],
         width=8.0,
         n=1024,
-        An=5,
+        An=2, # this need to be even
         title=None,
     ):
         xmin, xmax, ymin, ymax = domain
@@ -397,42 +386,95 @@ def _(np, plt):
         plt.axis("equal")
         return plt.gcf()
 
-    _()
-    #_(Joukowsky, An=1)
+    #_(An=16)
+    #_(lambda z: (z - 1) ** 2 / (z + 1), An=16)
+    _(lambda z: 0.5 * (z + 1 / z), An=16)
+    #_(lambda z: np.sin(1 / z), An=16)
     return
 
 
-@app.cell
+@app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
-    ## Colormaps
+    Now we can use some hybrid representation where contours are used for argument but color maps are used for the modulus.
     """)
     return
 
 
-@app.cell
-def _(colormaps):
-    colormaps["viridis"]
+@app.cell(hide_code=True)
+def _(np, plt):
+    def _(
+        f=lambda z: z,
+        domain=[-2, 2, -1.5, 1.5],
+        vmin=-2,
+        vmax=+2,
+        width=8.0,
+        n=2048,
+        An=4,
+        title=None,
+    ):
+        xmin, xmax, ymin, ymax = domain
+        w = xmax - xmin
+        h = ymax - ymin
+        eps = 0.1
+        x_xmin = xmin - w * eps/2
+        x_xmax = xmax + w * eps/2
+        x_ymin = ymin - h * eps/2
+        x_ymax = ymax + h * eps/2
+        x_domain = x_xmin, x_xmax, x_ymin, x_ymax
+        X, Y = np.meshgrid(
+            np.linspace(x_xmin, x_xmax, n),
+            np.linspace(x_ymin, x_ymax, n),
+        )
+
+        Z = X + 1j * Y
+        W = f(Z)
+        L = np.log2(np.abs(W))
+        A = np.angle(W) / (2 * np.pi) * An 
+
+        wh_ratio = (xmax - xmin) / (ymax - ymin)
+        plt.figure(figsize=(width, width / wh_ratio))
+        ax = plt.gca()
+        ax.set_facecolor("white")
+        im = ax.imshow(
+            L,
+            extent=domain,
+            interpolation="nearest",
+            cmap="hot",
+            rasterized=True,
+            alpha=0.9,
+            vmin=vmin,
+            vmax=vmax,
+        )
+        plt.contour(
+            X,
+            Y,
+            np.sin(np.pi * A),
+            levels=[0.0],
+            colors="black",
+            linestyles="dotted",
+            linewidths=0.5,
+        )
+        if title:
+            plt.title(title)
+        plt.xlim(xmin, xmax)
+        plt.ylim(ymin, ymax)
+        ax.set_aspect("equal", adjustable="box")
+        return plt.gcf()
+
+    #_(lambda z: z)
+    #_(lambda z: (z - 1) ** 2 / (z + 1), An=16)
+    _(lambda z: 0.5 * (z + 1 / z), An=16)
+    #_(lambda z: np.sin(1 / z), An=16)
     return
 
 
-@app.cell
-def _(colormaps, np, plt):
-    def show_colormap_RGB(colormap):
-        if isinstance(colormap, str):
-            colormap = colormaps[colormap]
-        u = np.linspace(0.0, 1.0, 1024)
-        RGBA = colormap(u)  # float64, but discretised (8-bit)
-        RGB = RGBA[:, :3]
-        fig = plt.figure(figsize=(8, 4.5))
-        plt.plot(u, RGB[:, 0], color="red")
-        plt.plot(u, RGB[:, 1], color="green")
-        plt.plot(u, RGB[:, 2], color="blue")
-        plt.grid(True)
-        return fig
-
-    show_colormap_RGB("viridis")
-    return (show_colormap_RGB,)
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    That's however rarely what is done since the resulting color images tend to be quite "flat" are there is a more informative representations. Instead we are going to use contours for the modulus and the colormap for the argument. The thing that needs to be adjusted is that we'd better select a cyclic colormap to avoid a visual discontinuity around $-\pi$. For example, we can pick `twilight` or even better, `twilight_shifted`.
+    """)
+    return
 
 
 @app.cell
@@ -442,31 +484,19 @@ def _(colormaps):
 
 
 @app.cell
-def _(show_colormap_RGB):
-    show_colormap_RGB("twilight")
-    return
-
-
-@app.cell
 def _(colormaps):
     colormaps["twilight_shifted"]
     return
 
 
-@app.cell
-def _(show_colormap_RGB):
-    show_colormap_RGB("twilight_shifted")
-    return
-
-
-@app.cell
+@app.cell(hide_code=True)
 def _(np, plt):
     def _(
-        f=Joukowsky,
+        f=lambda z: z,
         domain=[-2, 2, -1.5, 1.5],
         width=8.0,
         n=2048,
-        title="Joukowsky transform",
+        title=None,
     ):
         xmin, xmax, ymin, ymax = domain
         w = xmax - xmin
@@ -503,7 +533,7 @@ def _(np, plt):
         plt.contour(
             X,
             Y,
-            L - np.round(L),
+            np.sin(np.pi * L),
             levels=[0.0],
             colors="black",
             linewidths=0.5,
@@ -515,20 +545,29 @@ def _(np, plt):
         ax.set_aspect("equal", adjustable="box")
         return plt.gcf()
 
-    _()
+    #_(lambda z: z)
+    #_(lambda z: (z - 1) ** 2 / (z + 1))
+    _(lambda z: 0.5 * (z + 1 / z))
+    #_(lambda z: np.sin(1 /z))
     return
 
 
-@app.cell
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    Of course you can also keep the argument contour lines if you want to!
+    """)
+    return
+
+
+@app.cell(hide_code=True)
 def _(np, plt):
     def _(
-        f,
+        f=lambda z: z,
         domain=[-2, 2, -1.5, 1.5],
-        vmin=-2,
-        vmax=+2,
         width=8.0,
         n=2048,
-        N=4,
+        An=4,
         title=None,
     ):
         xmin, xmax, ymin, ymax = domain
@@ -544,30 +583,38 @@ def _(np, plt):
             np.linspace(x_xmin, x_xmax, n),
             np.linspace(x_ymin, x_ymax, n),
         )
-    
+        wh_ratio = (xmax - xmin) / (ymax - ymin)
         Z = X + 1j * Y
         W = f(Z)
         L = np.log2(np.abs(W))
-        A = np.angle(W) / (2 * np.pi / N) 
+        A = np.angle(W) / (2 * np.pi)
 
-        wh_ratio = (xmax - xmin) / (ymax - ymin)
         plt.figure(figsize=(width, width / wh_ratio))
         ax = plt.gca()
         ax.set_facecolor("white")
         im = ax.imshow(
-            L,
-            extent=domain,
+            A,
+            extent=x_domain,
             interpolation="nearest",
-            cmap="viridis",
+            cmap="twilight_shifted",
             rasterized=True,
             alpha=0.9,
-            vmin=vmin,
-            vmax=vmax,
+            vmin = -0.5,
+            vmax = +0.5,
         )
         plt.contour(
             X,
             Y,
-            A - np.round(A),
+            np.sin(np.pi * A * An),
+            linestyles="dotted",
+            levels=[0.0],
+            colors="black",
+            linewidths=0.5,
+        )
+        plt.contour(
+            X,
+            Y,
+            np.sin(np.pi * L),
             levels=[0.0],
             colors="black",
             linewidths=0.5,
@@ -579,285 +626,10 @@ def _(np, plt):
         ax.set_aspect("equal", adjustable="box")
         return plt.gcf()
 
-    _(Joukowsky, N=16)
-    return
-
-
-@app.cell
-def _(np, plt):
-    _T = np.linspace(-2.5, 2.5, 1024)
-    _X, _Y = np.meshgrid(_T, _T)
-    _Z = _X + 1j * _Y
-    _W = _Z
-    _A = np.angle(_W)
-    _N = 2
-    _An = _A / 2 / np.pi * _N
-    _L = np.log2(abs(_W))
-    plt.figure(figsize=(8, 8))
-    _ax = plt.gca()
-    _ax.set_facecolor("white")
-    _im = _ax.imshow(
-        _A,
-        interpolation="nearest",
-        cmap="twilight_shifted",
-        rasterized=True,
-        alpha=1.0,
-    )
-    _ax.contour(_An - np.round(_An), [0.0], colors="black", linewidths=0.5)
-    _ax.contour(_L - np.round(_L), [0.0], colors="black", linewidths=0.5)
-    _ax.set_xticks([])
-    _ax.set_yticks([])
-    plt.gcf()  # "twilight", #"twilight", #"Spectral",
-    return
-
-
-@app.cell
-def _(np, plt):
-    _T = np.linspace(-2.5, 2.5, 1024)
-    _X, _Y = np.meshgrid(_T, _T)
-    _Z = _X + 1j * _Y
-    _W = _Z**2
-    _A = np.angle(_W)
-    _N = 2
-    _An = _A / 2 / np.pi * _N
-    _L = np.log2(abs(_W))
-    plt.figure(figsize=(8, 8))
-    _ax = plt.gca()
-    _ax.set_facecolor("white")
-    _im = _ax.imshow(
-        _A,
-        interpolation="nearest",
-        cmap="twilight_shifted",
-        rasterized=True,
-        alpha=1.0,
-    )
-    _ax.contour(_An - np.round(_An), [0.0], colors="black", linewidths=0.5)
-    _ax.contour(_L - np.round(_L), [0.0], colors="black", linewidths=0.5)
-    _ax.set_xticks([])
-    _ax.set_yticks([])
-    plt.gcf()  # "twilight", #"twilight", #"Spectral",
-    return
-
-
-@app.cell
-def _(np, plt):
-    # TODO:
-    _T = np.linspace(-2.5, 2.5, 1024)
-    _X, _Y = np.meshgrid(_T, _T)
-    _Z = _X + 1j * _Y
-    _W = 1 / (_Z - 1)
-    _A = np.angle(_W)
-    _N = 2
-    _An = _A / 2 / np.pi * _N
-    _L = np.log2(abs(_W))
-    plt.figure(figsize=(8, 8))
-    _ax = plt.gca()
-    _ax.set_facecolor("white")
-    _im = _ax.imshow(
-        _A,
-        interpolation="nearest",
-        cmap="twilight_shifted",
-        rasterized=True,
-        alpha=1.0,
-    )
-    _ax.contour(_An - np.round(_An), [0.0], colors="black", linewidths=0.5)
-    _ax.contour(_L - np.round(_L), [0.0], colors="black", linewidths=0.5)
-    _ax.set_xticks([])
-    _ax.set_yticks([])
-    plt.gcf()  # "twilight", #"twilight", #"Spectral",
-    return
-
-
-@app.cell
-def _(np, plt):
-    def _(
-        f=lambda z: (z + 1)**2 / (z-1),
-        domain=[-2, 2, -1.5, 1.5],
-        width=8.0,
-        n=2048,
-        title=None
-    ):
-        xmin, xmax, ymin, ymax = domain
-        X, Y = np.meshgrid(
-            np.linspace(xmin, xmax, 2048),
-            np.linspace(ymin, ymax, 2048),
-        )
-        wh_ratio = (xmax - xmin) / (ymax - ymin)
-        Z = X + 1j * Y
-        W = f(Z)
-        L = np.log2(np.abs(W))
-        A = np.angle(W) / (2 * np.pi) 
-
-        plt.figure(figsize=(width, width / wh_ratio))
-        ax = plt.gca()
-        ax.set_facecolor("white")
-        im = ax.imshow(
-            A,
-            extent=domain,
-            interpolation="nearest",
-            cmap="twilight_shifted",
-            rasterized=True,
-            alpha=0.9,
-        )
-        plt.contour(
-            X,
-            Y,
-            L - np.round(L),
-            levels=[0.0],
-            colors="black",
-            linewidths=0.5,
-        )
-        plt.contour(
-            X,
-            Y,
-            A * 4 - np.round(A * 4),
-            levels=[0.0],
-            colors="black",
-            linestyles="dotted",
-            linewidths=0.5,
-        )
-        if title:
-            plt.title(title)
-        ax.set_xticks([])
-        ax.set_yticks([])
-
-        #plt.savefig("domain-coloring.png")
-        return plt.gcf()
-
-
-    _()
-
-    return
-
-
-@app.cell
-def _(np, plt):
-    # TODO:
-    _T = np.linspace(-2.5, 2.5, 1024)
-    _X, _Y = np.meshgrid(_T, _T)
-    _Z = _X + 1j * _Y
-    _W = 0.5 * (_Z + 1 / _Z)
-    _A = np.angle(_W)
-    _N = 2
-    _An = _A / 2 / np.pi * _N
-    _L = np.log2(abs(_W))
-    plt.figure(figsize=(8, 8))
-    _ax = plt.gca()
-    _ax.set_facecolor("white")
-    _im = _ax.imshow(
-        _A,
-        interpolation="nearest",
-        cmap="twilight_shifted",
-        rasterized=True,
-        alpha=1.0,
-    )
-    _ax.contour(_An - np.round(_An), [0.0], colors="black", linewidths=0.5)
-    _ax.contour(_L - np.round(_L), [0.0], colors="black", linewidths=0.5)
-    _ax.set_xticks([])
-    _ax.set_yticks([])
-    plt.gcf()  # "twilight", #"twilight", #"Spectral",
-    return
-
-
-@app.cell
-def _(np, plt):
-    # TODO:
-    _T = np.linspace(-2.5, 2.5, 1024)
-    _X, _Y = np.meshgrid(_T, _T)
-    _Z = _X + 1j * _Y
-    _W = 0.5 * (_Z + 1 / _Z)
-    _A = np.angle(_W)
-    _N = 2
-    _An = _A / 2 / np.pi * _N
-    _L = np.log2(abs(_W))
-    plt.figure(figsize=(8, 8))
-    _ax = plt.gca()
-    _ax.set_facecolor("white")
-    _im = _ax.imshow(
-        _L,
-        interpolation="nearest",
-        cmap="hot",
-        vmin=-3,
-        vmax=3,
-        rasterized=True,
-        alpha=1.0,
-    )
-    _ax.contour(_An - np.round(_An), [0.0], colors="black", linewidths=0.5)
-    _ax.contour(_L - np.round(_L), [0.0], colors="black", linewidths=0.5)
-    _ax.set_xticks([])
-    _ax.set_yticks([])
-    plt.gcf()  # "twilight", #"twilight", #"Spectral",
-    return
-
-
-@app.cell
-def _(np, plt):
-    # TODO:
-    _T = np.linspace(-0.1, 0.1, 4096)
-    _X, _Y = np.meshgrid(_T, _T)
-    _Z = _X + 1j * _Y
-    _W = np.exp(1 / _Z)
-    _A = np.angle(_W)
-    _N = 2
-    _An = _A / 2 / np.pi * _N
-    _L = np.log2(abs(_W))
-    plt.figure(figsize=(8, 8))
-    _ax = plt.gca()
-    _ax.set_facecolor("white")
-    _im = _ax.imshow(
-        _A,
-        interpolation="nearest",
-        cmap="twilight_shifted",
-        rasterized=True,
-        alpha=1.0,
-    )
-    _ax.contour(_An - np.round(_An), [0.0], colors="black", linewidths=0.5, alpha=0)
-    _ax.contour(_L - np.round(_L), [0.0], colors="black", linewidths=0.5, alpha=0)
-    _ax.set_xticks([])
-    _ax.set_yticks([])
-    plt.gcf()  # "twilight", #"twilight", #"Spectral",
-    return
-
-
-@app.cell
-def _(np, plt):
-    # TODO:
-    _T = np.linspace(-0.1, 0.1, 4096)
-    _X, _Y = np.meshgrid(_T, _T)
-    _Z = _X + 1j * _Y
-    _W = np.sin(1 / _Z)
-    _A = np.angle(_W)
-    _N = 2
-    _An = _A / 2 / np.pi * _N
-    _L = np.log2(abs(_W))
-    plt.figure(figsize=(16, 16))
-    _ax = plt.gca()
-    _ax.set_facecolor("white")
-    _im = _ax.imshow(
-        _A,
-        interpolation="nearest",
-        cmap="twilight_shifted",
-        rasterized=True,
-        alpha=1.0,
-    )
-    _ax.contour(_An - np.round(_An), [0.0], colors="black", linewidths=0.5, alpha=0)
-    _ax.contour(_L - np.round(_L), [0.0], colors="black", linewidths=0.5, alpha=0)
-    _ax.set_xticks([])
-    _ax.set_yticks([])
-    plt.gcf()  # "twilight", #"twilight", #"Spectral",
-    return
-
-
-@app.cell
-def _(colormaps):
-    cm = colormaps["twilight_shifted"]
-    cm
-    return (cm,)
-
-
-@app.cell
-def _(cm):
-    cm([[[0.0], [0.5], [1.0]]])
+    #_(lambda z: z, An=16)
+    #_(lambda z: (z - 1) ** 2 / (z + 1), An=16)
+    _(lambda z: 0.5 * (z + 1 / z), An=16)
+    #_(lambda z: np.sin(1 /z), An=16)
     return
 
 
