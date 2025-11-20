@@ -229,7 +229,7 @@ def _(mo, np, plt):
         Z = f(X, Y)
 
         fig = plt.figure()
-        plt.imshow(Z, extent=[-2, 2, -1, 1])
+        plt.imshow(Z, extent=[-2, 2, -1, 1], origin="lower")
         plt.colorbar()
         return mo.center(fig)
 
@@ -270,7 +270,7 @@ def _(colormaps, mo, np, plt):
         Z = f(X, Y)
 
         fig = plt.figure()
-        plt.imshow(Z, extent=[-2, 2, -1, 1], cmap=colormaps["jet"])
+        plt.imshow(Z, extent=[-2, 2, -1, 1], cmap=colormaps["jet"], origin="lower")
         plt.colorbar()
         return mo.center(fig)
 
@@ -445,6 +445,7 @@ def _(np, plt):
             alpha=0.9,
             vmin=vmin,
             vmax=vmax,
+            origin="lower",
         )
         plt.contour(
             X,
@@ -529,6 +530,7 @@ def _(np, plt):
             alpha=0.9,
             vmin = -0.5,
             vmax = +0.5,
+            origin="lower",
         )
         plt.contour(
             X,
@@ -601,6 +603,7 @@ def _(np, plt):
             alpha=0.9,
             vmin = -0.5,
             vmax = +0.5,
+            origin="lower",
         )
         plt.contour(
             X,
